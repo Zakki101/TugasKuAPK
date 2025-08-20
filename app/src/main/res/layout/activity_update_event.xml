@@ -38,7 +38,7 @@
         app:hintTextAppearance="@font/intro_rust"
         app:hintEnabled="true">
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edt_rinciankegiatan"
+            android:id="@+id/edt_rincian_kegiatan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="RINCIAN KEGIATAN"

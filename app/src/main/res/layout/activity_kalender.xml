@@ -2,7 +2,6 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.KalenderActivity"
@@ -52,7 +51,18 @@
                 android:id="@+id/kalenderview"
                 android:layout_width="match_parent"
                 android:layout_marginTop="-10dp"
-                android:layout_height="290dp"/>
+                android:layout_height="300dp"/>
+            <TextView
+                android:layout_width="380dp"
+                android:layout_height="21dp"
+                android:fontFamily="@font/intro_rust"
+                android:layout_marginStart="10dp"
+                android:paddingStart="8sp"
+                android:paddingEnd="0dp"
+                android:paddingTop="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/smooth_corners"
+                android:text="KEGIATAN:"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rviewkalender"
                 android:nestedScrollingEnabled="false"
@@ -62,17 +72,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/backgroundmain"/>
-            <TextView
-                android:layout_width="380dp"
-                android:layout_height="21dp"
-                android:fontFamily="@font/intro_rust"
-                android:layout_marginStart="10dp"
-                android:paddingStart="5sp"
-                android:paddingEnd="0dp"
-                android:paddingTop="1dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/smooth_corners"
-                android:text="KEGIATAN:"/>
         </LinearLayout>
     </ScrollView>
 

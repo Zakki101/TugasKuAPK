@@ -5,14 +5,16 @@ import java.time.LocalDateTime;
 
 public class Kalender implements Serializable {
     private int id_acara;
-    private String judul_acara, rincian_acara;
+    private String judul_acara;
+    private String rincian_acara;
     private LocalDateTime waktuMulaiAcara;
     private LocalDateTime waktuSelesaiAcara;
 
     public Kalender() {
     }
 
-    public Kalender(int id_acara, String judul_acara, String rincian_acara, LocalDateTime waktuMulaiAcara, LocalDateTime waktuSelesaiAcara) {
+    public Kalender(int id_acara, String judul_acara, String rincian_acara,
+                    LocalDateTime waktuMulaiAcara, LocalDateTime waktuSelesaiAcara) {
         this.id_acara = id_acara;
         this.judul_acara = judul_acara;
         this.rincian_acara = rincian_acara;
@@ -62,11 +64,12 @@ public class Kalender implements Serializable {
 
     @Override
     public String toString() {
-        return "Event{" +
+        return "Kalender{" +
                 "id_acara=" + id_acara +
                 ", judul_acara='" + judul_acara + '\'' +
-                ", waktu_mulai_acara='" + waktuMulaiAcara.toString() + '\'' +
-                ", waktu_selesai_acara=" + waktuSelesaiAcara.toString() +
+                ", rincian_acara='" + rincian_acara + '\'' +
+                ", waktu_mulai_acara=" + (waktuMulaiAcara != null ? waktuMulaiAcara.toString() : "null") +
+                ", waktu_selesai_acara=" + (waktuSelesaiAcara != null ? waktuSelesaiAcara.toString() : "null") +
                 '}';
     }
 }

@@ -40,6 +40,7 @@ public class KalenderActivity extends AppCompatActivity {
         setupButtonListeners();
         setupCalendar();
         setupRecyclerView();
+        loadDataEvent();
     }
 
     private void initializeViews() {
@@ -47,6 +48,7 @@ public class KalenderActivity extends AppCompatActivity {
         btntugas = findViewById(R.id.btntask);
         btnsetting = findViewById(R.id.btnsetting);
         calendarView = findViewById(R.id.kalenderview);
+        recyclerView = findViewById(R.id.rviewkalender);
 
     }
 
@@ -67,6 +69,7 @@ public class KalenderActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(Kadapter);
     }
+
     private void loadDataEvent() {
         dbHelper = new HelperKalender(this);
         EventArrayList = dbHelper.getAllEvent();
@@ -86,7 +89,7 @@ public class KalenderActivity extends AppCompatActivity {
 
     private void setupButtonListeners() {
         btntambahevent.setOnClickListener(v -> {
-            Intent tmbhevent = new Intent(KalenderActivity.this, IsiTugas.class);
+            Intent tmbhevent = new Intent(KalenderActivity.this, IsiEvent.class);
             startActivity(tmbhevent);
         });
 

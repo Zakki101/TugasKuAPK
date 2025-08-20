@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.proman.tugasku.R;
+import com.proman.tugasku.activity.UpdateEventActivity;
 import com.proman.tugasku.activity.UpdateTaskActivity;
 import com.proman.tugasku.model.Kalender;
 
@@ -36,8 +37,7 @@ public class KalenderAdapter extends RecyclerView.Adapter<KalenderAdapter.EventV
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.event, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event, parent, false);
         return new EventViewHolder(view);
     }
 
@@ -54,7 +54,8 @@ public class KalenderAdapter extends RecyclerView.Adapter<KalenderAdapter.EventV
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String tglMulai = kalender.getWaktuMulaiAcara().format(formatter);
             String tglSelesai = kalender.getWaktuSelesaiAcara().format(formatter);
-            holder.tv_acara_mulai.setText(String.format("%s - %s", tglMulai, tglSelesai));
+            holder.tv_acara_mulai.setText(tglMulai);
+            holder.tv_acara_selesai.setText(tglSelesai);
 
             // Menghitung durasi dalam hari
             long daysBetween = Duration.between(kalender.getWaktuMulaiAcara().toLocalDate().atStartOfDay(), kalender.getWaktuSelesaiAcara().toLocalDate().atStartOfDay()).toDays();
@@ -67,7 +68,7 @@ public class KalenderAdapter extends RecyclerView.Adapter<KalenderAdapter.EventV
 
         // Menambahkan OnClickListener untuk setiap item
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, UpdateTaskActivity.class);
+            Intent intent = new Intent(activity, UpdateEventActivity.class);
             intent.putExtra("event", kalender);
             activity.startActivity(intent);
         });
@@ -79,7 +80,7 @@ public class KalenderAdapter extends RecyclerView.Adapter<KalenderAdapter.EventV
     }
 
     public static class EventViewHolder extends RecyclerView.ViewHolder {
-        // Deklarasikan semua View dari event.xml
+        // Deklarasikan semua View
         final TextView tv_title_event;
         final TextView tv_acara_mulai, tv_acara_selesai;
         final TextView tv_lamaacara;

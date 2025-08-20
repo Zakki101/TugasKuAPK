@@ -14,7 +14,10 @@ import com.proman.tugasku.model.Kalender;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -32,7 +35,8 @@ public class HelperKalender extends SQLiteOpenHelper{
         private static final String KEY_WAKTU_SELESAI = "tanggal_event_selesai";
         // Date format for database storage
         private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
-        private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT, Locale.getDefault());
+
 
         // SQL to create table
         private static final String CREATE_TABLE_EVENT = "CREATE TABLE "
@@ -40,18 +44,24 @@ public class HelperKalender extends SQLiteOpenHelper{
                 + KEY_ID_EVENT + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_JUDUL_EVENT + " TEXT NOT NULL,"
                 + KEY_RINCIAN_EVENT + " TEXT,"
-                + KEY_WAKTU_MULAI + " TEXT NOT NULL,"
-                + KEY_WAKTU_SELESAI + " TEXT NOT NULL)";
+                + KEY_WAKTU_MULAI + " INTEGER NOT NULL,"
+                + KEY_WAKTU_SELESAI + " INTEGER NOT NULL)";
 
-        public HelperKalender(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        // Helper: LocalDateTime -> String
+        private String formatDateTime(LocalDateTime ldt) {
+            return ldt.format(formatter);
         }
 
-    public HelperKalender(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
+        // Helper: String -> LocalDateTime
+        private LocalDateTime parseDateTime(String str) {
+            return LocalDateTime.parse(str, formatter);
+        }
 
-    @Override
+        public HelperKalender(@Nullable Context context) {
+                super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        }
+
+        @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(CREATE_TABLE_EVENT);
         }
@@ -62,15 +72,15 @@ public class HelperKalender extends SQLiteOpenHelper{
             onCreate(db);
         }
 
-        // Add a new task
+        // Add new event
         public long addEvent(Kalender event) {
             SQLiteDatabase db = this.getWritableDatabase();
 
             ContentValues values = new ContentValues();
             values.put(KEY_JUDUL_EVENT, event.getJudul_acara());
             values.put(KEY_RINCIAN_EVENT, event.getRincian_acara());
-            values.put(KEY_WAKTU_MULAI, dateFormat.format(event.getWaktuMulaiAcara()));
-            values.put(KEY_WAKTU_SELESAI, dateFormat.format(event.getWaktuSelesaiAcara()));
+            values.put(KEY_WAKTU_MULAI, formatDateTime(event.getWaktuMulaiAcara()));
+            values.put(KEY_WAKTU_SELESAI, formatDateTime(event.getWaktuSelesaiAcara()));
 
             long id = db.insert(TABLE_EVENT, null, values);
             db.close();
@@ -90,98 +100,74 @@ public class HelperKalender extends SQLiteOpenHelper{
             if (cursor.moveToFirst()) {
                 do {
                     Kalender event = new Kalender();
-                    event.setId_acara(cursor.getInt(cursor.getColumnIndex(KEY_ID_EVENT)));
-                    event.setJudul_acara(cursor.getString(cursor.getColumnIndex(KEY_JUDUL_EVENT)));
-                    event.setRincian_acara(cursor.getString(cursor.getColumnIndex(KEY_RINCIAN_EVENT)));
+                    event.setId_acara(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_EVENT)));
+                    event.setJudul_acara(cursor.getString(cursor.getColumnIndexOrThrow(KEY_JUDUL_EVENT)));
+                    event.setRincian_acara(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RINCIAN_EVENT)));
 
-                    try {
-                        String tglmulaievent = cursor.getString(cursor.getColumnIndex(KEY_WAKTU_MULAI));
-                        LocalDateTime tglmulai = LocalDateTime.parse(tglmulaievent);
-                        event.setWaktuMulaiAcara(tglmulai);
+                    String TglmulaiStr = cursor.getString(cursor.getColumnIndexOrThrow(KEY_WAKTU_MULAI));
+                    String TglselesaiStr = cursor.getString(cursor.getColumnIndexOrThrow(KEY_WAKTU_SELESAI));
 
-                        String tglselesaievent = cursor.getString(cursor.getColumnIndex(KEY_WAKTU_SELESAI));
-                        LocalDateTime tglselesai = LocalDateTime.parse(tglselesaievent);
-                        event.setWaktuSelesaiAcara(tglselesai);
-                        eventList.add(event);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-            } while (cursor.moveToNext());
+                    event.setWaktuMulaiAcara(parseDateTime(TglmulaiStr));
+                    event.setWaktuSelesaiAcara(parseDateTime(TglselesaiStr));
+
+                    eventList.add(event);
+                } while (cursor.moveToNext());
+            }
 
             cursor.close();
             db.close();
-
             return eventList;
         }
-        /*
+
         // Update a task
-        public int updateKalender(Kalender kalender) {
-            SQLiteDatabase db = this.getWritableDatabase();
+        public int updateEvent(Kalender event) {
+            SQLiteDatabase db = this.getReadableDatabase();
             ContentValues values = new ContentValues();
-            values.put(KEY_JUDUL_EVENT, event.getJudul());
-            values.put(KEY_RINCIAN_EVENT, event.getRincian());
-            values.put(KEY_WAKTU_MULAI, LocalDateTime.format(tugas.getTanggalAkhir()));
-            values.put(KEY_WAKTU_SELESAI, tugas.isSelesai() ? 1 : 0);
+            values.put(KEY_JUDUL_EVENT, event.getJudul_acara());
+            values.put(KEY_RINCIAN_EVENT, event.getRincian_acara());
+            values.put(KEY_WAKTU_MULAI, formatDateTime(event.getWaktuMulaiAcara()));
+            values.put(KEY_WAKTU_SELESAI, formatDateTime(event.getWaktuSelesaiAcara()));
 
             int rowsAffected = db.update(TABLE_EVENT, values, KEY_ID_EVENT + " = ?",
-                    new String[]{String.valueOf(tugas.getId())});
+                    new String[]{String.valueOf(event.getId_acara())});
             db.close();
 
             return rowsAffected;
         }
-         */
 
-        /*
         // Delete a task
-        public void deleteTugas(long id) {
+        public void deleteEvent(long id) {
             SQLiteDatabase db = this.getWritableDatabase();
             db.delete(TABLE_EVENT, KEY_ID_EVENT + " = ?",
                     new String[]{String.valueOf(id)});
             db.close();
         }
-       */
 
         // Get a single task by ID
-            public Kalender getEvent(long id) {
-                db = this.getReadableDatabase();
-                cursor = null;
-                Kalender kalender = null;
+        @SuppressLint("Range")
+        public Kalender getEvent(long id) {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.query(TABLE_EVENT,
+                    new String[]{KEY_ID_EVENT, KEY_JUDUL_EVENT, KEY_RINCIAN_EVENT, KEY_WAKTU_MULAI, KEY_WAKTU_SELESAI},
+                    KEY_ID_EVENT + "=?",
+                    new String[]{String.valueOf(id)}, null, null, null);
 
-                try {
-                    cursor = db.query(TABLE_EVENT,
-                            new String[]{KEY_ID_EVENT, KEY_JUDUL_EVENT, KEY_RINCIAN_EVENT, KEY_WAKTU_MULAI, KEY_WAKTU_SELESAI},
-                            KEY_ID_EVENT + "=?",
-                            new String[]{String.valueOf(id)}, null, null, null, null);
+            Kalender event = null;
+            if (cursor != null && cursor.moveToFirst()) {
+                event = new Kalender();
+                event.setId_acara(cursor.getInt(cursor.getColumnIndex(KEY_ID_EVENT)));
+                event.setJudul_acara(cursor.getString(cursor.getColumnIndex(KEY_JUDUL_EVENT)));
+                event.setRincian_acara(cursor.getString(cursor.getColumnIndex(KEY_RINCIAN_EVENT)));
 
-                    if (cursor != null && cursor.moveToFirst()) {
-                        kalender = new Kalender(); // Buat objek baru
-                        kalender.setId_acara(cursor.getInt(cursor.getColumnIndex(KEY_ID_EVENT)));
-                        kalender.setJudul_acara(cursor.getString(cursor.getColumnIndex(KEY_JUDUL_EVENT)));
-                        kalender.setRincian_acara(cursor.getString(cursor.getColumnIndex(KEY_RINCIAN_EVENT)));
+                String TglmulaiStr = cursor.getString(cursor.getColumnIndex(KEY_WAKTU_MULAI));
+                String TglselesaiStr = cursor.getString(cursor.getColumnIndex(KEY_WAKTU_SELESAI));
 
-                        try {
-                            String tglMulaiStr = cursor.getString(cursor.getColumnIndex(KEY_WAKTU_MULAI));
-                            if (tglMulaiStr != null) {
-                                kalender.setWaktuMulaiAcara(LocalDateTime.parse(tglMulaiStr));
-                            }
-
-                            String tglSelesaiStr = cursor.getString(cursor.getColumnIndex(KEY_WAKTU_SELESAI));
-                            if (tglSelesaiStr != null) {
-                                kalender.setWaktuSelesaiAcara(LocalDateTime.parse(tglSelesaiStr));
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } finally {
-                    if (cursor != null) {
-                        cursor.close();
-                    }
-                    if (db != null) {
-                        db.close();
-                    }
-                }
-                return kalender;
+                event.setWaktuMulaiAcara(parseDateTime(TglmulaiStr));
+                event.setWaktuSelesaiAcara(parseDateTime(TglselesaiStr));
             }
-    }
+
+            if (cursor != null) cursor.close();
+            db.close();
+            return event;
+        }
 }
