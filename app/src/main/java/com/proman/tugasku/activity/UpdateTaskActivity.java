@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class UpdateActivity extends AppCompatActivity {
+public class UpdateTaskActivity extends AppCompatActivity {
     private HelperTugas dbhelper;
     private EditText etJudul, etRincian, etTglAkhir;
     private RadioGroup rgStatus;
@@ -34,7 +34,7 @@ public class UpdateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update);
+        setContentView(R.layout.activity_update_tugas);
 
         dbhelper = new HelperTugas(this);
         initializeViews();

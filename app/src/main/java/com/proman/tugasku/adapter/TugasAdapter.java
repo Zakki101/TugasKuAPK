@@ -11,13 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.proman.tugasku.R;
-import com.proman.tugasku.activity.UpdateActivity;
+import com.proman.tugasku.activity.UpdateTaskActivity;
 import com.proman.tugasku.model.Tugas;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class TugasAdapter extends RecyclerView.Adapter<TugasAdapter.TugasViewHolder> {
@@ -63,7 +61,7 @@ public class TugasAdapter extends RecyclerView.Adapter<TugasAdapter.TugasViewHol
 
         // Handle klik item
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, UpdateActivity.class);
+            Intent intent = new Intent(activity, UpdateTaskActivity.class);
             intent.putExtra("tugas", tugas);
             activity.startActivity(intent);
         });

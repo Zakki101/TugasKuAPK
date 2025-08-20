@@ -58,12 +58,13 @@
         android:weightSum="2">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
             app:hintTextAppearance="@font/intro_rust"
             android:layout_weight="1">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edt_deadline"
+                android:id="@+id/edt_tanggal_akhir"
                 android:layout_width="379dp"
                 android:layout_height="wrap_content"
                 android:hint="DEADLINE"
@@ -117,17 +118,39 @@
         </RadioGroup>
     </LinearLayout>
 
-    <!-- Button TAMBAH -->
-    <Button
-        android:id="@+id/btn_tambah"
-        style="@style/Widget.MaterialComponents.Button"
+    <!-- Button -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TAMBAH"
-        android:textAllCaps="false"
-        android:textSize="16sp"
-        app:backgroundTint="@color/backgroundmain"
-        android:fontFamily="@font/intro_rust"
-        android:textColor="@color/black" />
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+        <Button
+            android:id="@+id/btn_delete"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="DELETE"
+            android:textSize="16sp"
+            app:backgroundTint="@color/warnmerah"
+            android:fontFamily="@font/intro_rust"
+            android:textColor="@color/white"/>
+
+        <Button
+            android:id="@+id/btn_update"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Update"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:backgroundTint="@color/backgroundmain"
+            android:fontFamily="@font/intro_rust"
+            android:textColor="@color/black"/>
+    </LinearLayout>
 
 </LinearLayout>
