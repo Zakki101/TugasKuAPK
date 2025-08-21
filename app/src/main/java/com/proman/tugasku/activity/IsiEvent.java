@@ -122,44 +122,66 @@ public class IsiEvent extends AppCompatActivity {
     }
 
     private boolean validateInput() {
-        boolean isValid = true;
+        // Reset error
+        etJudulKegiatan.setError(null);
+        etRincianKegiatan.setError(null);
+        etTglMulai.setError(null);
+        etTglAkhir.setError(null);
 
-        if (etJudulKegiatan.getText().toString().trim().isEmpty()) {
+        boolean isValid = true;
+        LocalDateTime tglMulai = null;
+        LocalDateTime tglAkhir = null;
+
+        String judul = etJudulKegiatan.getText().toString().trim();
+        String rincian = etRincianKegiatan.getText().toString().trim();
+        String tgl_Mulai = etTglMulai.getText().toString().trim();
+        String tgl_Akhir = etTglAkhir.getText().toString().trim();
+
+        if (judul.isEmpty()) {
             etJudulKegiatan.setError("Judul tidak boleh kosong");
             isValid = false;
         }
 
-        if (etRincianKegiatan.getText().toString().trim().isEmpty()) {
+        if (rincian.isEmpty()) {
             etRincianKegiatan.setError("Rincian tidak boleh kosong");
             isValid = false;
         }
 
-        if (etTglMulai.getText().toString().isEmpty()) {
-            etTglMulai.setError("Waktu mulai acara tidak boleh kosong");
+        if (tgl_Mulai.isEmpty()) {
+            Toast.makeText(this, "Isi Tanggal Mulai Acara", Toast.LENGTH_SHORT).show();
             isValid = false;
         } else {
             try {
-                LocalDateTime.parse(etTglMulai.getText().toString(), displayFormatter);
+                tglMulai = LocalDateTime.parse(tgl_Mulai, displayFormatter);
             } catch (Exception e) {
-                etTglMulai.setError("Format tanggal salah");
+                Toast.makeText(this, "Format Tanggal Mulai Salah", Toast.LENGTH_SHORT).show();
                 isValid = false;
             }
         }
 
-        if (etTglAkhir.getText().toString().isEmpty()) {
-            etTglAkhir.setError("Waktu selesai acara tidak boleh kosong");
+        if (tgl_Akhir.isEmpty()) {
+            Toast.makeText(this, "Isi Tanggal Selesai Acara", Toast.LENGTH_SHORT).show();
             isValid = false;
         } else {
             try {
-                LocalDateTime.parse(etTglAkhir.getText().toString(), displayFormatter);
+                tglAkhir = LocalDateTime.parse(tgl_Akhir, displayFormatter);
             } catch (Exception e) {
-                etTglAkhir.setError("Format tanggal salah");
+                Toast.makeText(this, "Format Tanggal Selesai Salah", Toast.LENGTH_SHORT).show();
+                isValid = false;
+            }
+        }
+
+        // Cek urutan waktu hanya kalau parsing sukses
+        if (tglMulai != null && tglAkhir != null) {
+            if (!tglMulai.isBefore(tglAkhir)) {
+                Toast.makeText(this, "Terdapat Kesalahan Pada Penanggalan", Toast.LENGTH_SHORT).show();
                 isValid = false;
             }
         }
 
         return isValid;
     }
+
 
     private void showSuccessAndFinish() {
         Toast.makeText(this, "Event berhasil ditambahkan", Toast.LENGTH_SHORT).show();

@@ -120,40 +120,66 @@ public class UpdateEventActivity extends AppCompatActivity {
     }
 
     private void updateTask() {
-        // Validate inputs
-        if (etJudulKegiatan.getText().toString().trim().isEmpty()) {
+        // Ambil input
+        String judul = etJudulKegiatan.getText().toString().trim();
+        String rincian = etRincianKegiatan.getText().toString().trim();
+        String sMulai = etTglMulai.getText().toString().trim();
+        String sAkhir = etTglAkhir.getText().toString().trim();
+
+        // Validasi judul
+        if (judul.isEmpty()) {
             etJudulKegiatan.setError("Judul tidak boleh kosong");
             return;
         }
 
+        // Validasi rincian
+        if (rincian.isEmpty()) {
+            etRincianKegiatan.setError("Rincian tidak boleh kosong");
+            return;
+        }
+
+        LocalDateTime tglMulai;
+        LocalDateTime tglAkhir;
+
+        // Validasi parsing tanggal
         try {
-            LocalDateTime tglMulai = LocalDateTime.parse(etTglMulai.getText().toString(),displayFormatter);
-            LocalDateTime tglAkhir = LocalDateTime.parse(etTglAkhir.getText().toString(),displayFormatter);
+            if (sMulai.isEmpty()) {
+                etTglMulai.setError("Tanggal mulai harus diisi");
+                Toast.makeText(this, "Isi Tanggal Mulai Acara", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                tglMulai = LocalDateTime.parse(sMulai, displayFormatter);
+            }
 
-            // Update task object
-            kalender.setJudul_acara(etJudulKegiatan.getText().toString());
-            kalender.setRincian_acara(etRincianKegiatan.getText().toString());
-            kalender.setWaktuMulaiAcara(tglMulai);
-            kalender.setWaktuSelesaiAcara(tglAkhir);
-
-            // Update in database
-            DbHelper.updateEvent(kalender);
-            Toast.makeText(this, "Event berhasil diperbarui", Toast.LENGTH_SHORT).show();
-            finish();
+            if (sAkhir.isEmpty()) {
+                etTglAkhir.setError("Tanggal akhir harus diisi");
+                Toast.makeText(this, "Isi Tanggal Selesai Acara", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                tglAkhir = LocalDateTime.parse(sAkhir, displayFormatter);
+            }
 
         } catch (Exception e) {
-            if (etTglMulai.getText().toString().isEmpty()) {
-                etTglMulai.setError("Tanggal akhir harus diisi");
-            } else {
-                etTglMulai.setError("Format tanggal salah (dd/MM/yyyy)");
-            }
-
-            if (etTglAkhir.getText().toString().isEmpty()) {
-                etTglAkhir.setError("Tanggal akhir harus diisi");
-            } else {
-                etTglAkhir.setError("Format tanggal salah (dd/MM/yyyy)");
-            }
+            Toast.makeText(this, "Format tanggal salah (dd/MM/yyyy HH:mm)", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        // Validasi urutan tanggal
+        if (!tglMulai.isBefore(tglAkhir)) {
+            Toast.makeText(this, "Terdapat Kesalahan Pada Penganggalan", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Update task object
+        kalender.setJudul_acara(judul);
+        kalender.setRincian_acara(rincian);
+        kalender.setWaktuMulaiAcara(tglMulai);
+        kalender.setWaktuSelesaiAcara(tglAkhir);
+
+        // Update ke database
+        DbHelper.updateEvent(kalender);
+        Toast.makeText(this, "Event berhasil diperbarui", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     private void deleteTask() {
