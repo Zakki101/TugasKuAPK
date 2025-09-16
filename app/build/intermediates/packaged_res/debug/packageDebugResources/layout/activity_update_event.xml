@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/white"
+    tools:context=".activity.UpdateEventActivity">
+
+    <!-- Judul Event -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="16dp"
+        app:hintTextAppearance="@font/intro_rust"
+        app:hintEnabled="true">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_Judul_kegiatan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="NAMA KEGIATAN"
+            android:textColorHint="@color/black"
+            android:textColor="@color/black"
+            android:inputType="textCapWords"
+            android:fontFamily="@font/alata_regular"
+            android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Rincian Kegiatan-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:hintTextAppearance="@font/intro_rust"
+        app:hintEnabled="true">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_rincian_kegiatan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="RINCIAN KEGIATAN"
+            android:fontFamily="@font/alata_regular"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:inputType="textMultiLine"
+            android:gravity="top" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Tanggal Acara -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:weightSum="2">
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintTextAppearance="@font/intro_rust"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="1">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_acara_mulai"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="TANGGAL ACARA DIMULAI"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:fontFamily="@font/alata_regular"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintTextAppearance="@font/intro_rust"
+            android:layout_weight="1">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_acara_selesai"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="TANGGAL ACARA SELESAI"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:fontFamily="@font/alata_regular"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <!-- Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+        <Button
+            android:id="@+id/btn_delete_event"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="DELETE"
+            android:textSize="16sp"
+            app:backgroundTint="@color/warnmerah"
+            android:fontFamily="@font/intro_rust"
+            android:textColor="@color/white"/>
+
+        <Button
+            android:id="@+id/btn_update_event"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Update"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:backgroundTint="@color/backgroundmain"
+            android:fontFamily="@font/intro_rust"
+            android:textColor="@color/black"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,15 +1,17 @@
 package com.proman.tugasku.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Locale;
 
 public class Tugas implements Serializable {
     private int id;
     private String judul, rincian;
-    private Date tanggalAkhir;
+    private LocalDateTime tanggalAkhir;
     private Boolean selesai;
 
-    public Tugas(String judul, String rincian, Date tanggalAkhir) {
+    public Tugas(String judul, String rincian, LocalDateTime tanggalAkhir) {
         this.judul = judul;
         this.rincian = rincian;
         this.tanggalAkhir = tanggalAkhir;
@@ -45,11 +47,11 @@ public class Tugas implements Serializable {
         this.rincian = rincian;
     }
 
-    public Date getTanggalAkhir() {
+    public LocalDateTime getTanggalAkhir() {
         return tanggalAkhir;
     }
 
-    public void setTanggalAkhir(Date tanggalAkhir) {
+    public void setTanggalAkhir(LocalDateTime tanggalAkhir) {
         this.tanggalAkhir = tanggalAkhir;
     }
 
@@ -68,8 +70,8 @@ public class Tugas implements Serializable {
 
     // Helper method untuk cek deadline
     public boolean isTerlambat() {
-        Date sekarang = new Date();
-        return !selesai && sekarang.after(tanggalAkhir);
+        LocalDateTime sekarang = LocalDateTime.now();
+        return !selesai && sekarang.isAfter(tanggalAkhir);
     }
 
     @Override

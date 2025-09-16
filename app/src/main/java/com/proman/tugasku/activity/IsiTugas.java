@@ -1,6 +1,7 @@
 package com.proman.tugasku.activity;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,10 +15,10 @@ import com.proman.tugasku.R;
 import com.proman.tugasku.db.HelperTugas;
 import com.proman.tugasku.model.Tugas;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 public class IsiTugas extends AppCompatActivity {
@@ -27,15 +28,16 @@ public class IsiTugas extends AppCompatActivity {
     private RadioGroup rgStatus;
     private RadioButton rbBelumSelesai;
     private Button btnTambah;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+    private static final DateTimeFormatter displayFormatter =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_isi_tugas);
-
         initializeViews();
-        setupDatePickers();
+        setupDateTimePickers();
         setupButtonListener();
     }
 
@@ -55,12 +57,11 @@ public class IsiTugas extends AppCompatActivity {
         rbBelumSelesai.setChecked(true);
     }
 
-    private void setupDatePickers() {
-        // Date picker for end date
-        etTglAkhir.setOnClickListener(v -> showDatePicker(etTglAkhir));
+    private void setupDateTimePickers() {
+        etTglAkhir.setOnClickListener(v -> showDateTimePicker(etTglAkhir));
     }
 
-    private void showDatePicker(final EditText editText) {
+    private void showDateTimePicker(EditText editText) {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -69,34 +70,41 @@ public class IsiTugas extends AppCompatActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Format: dd/MM/yyyy
-                    String selectedDate = String.format(Locale.getDefault(),
-                            "%02d/%02d/%04d",
-                            selectedDay,
-                            selectedMonth + 1,
-                            selectedYear);
-                    editText.setText(selectedDate);
-                },
-                year, month, day);
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
 
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(
+                            this,
+                            (timeView, selectedHour, selectedMinute) -> {
+                                LocalDateTime ldt = LocalDateTime.of(
+                                        selectedYear, selectedMonth + 1, selectedDay,
+                                        selectedHour, selectedMinute);
+                                editText.setText(ldt.format(displayFormatter));
+                            },
+                            hour, minute, true
+                    );
+                    timePickerDialog.show();
+                },
+                year, month, day
+        );
         datePickerDialog.show();
     }
 
+    //Setup button di isi tugas
     private void setupButtonListener() {
         btnTambah.setOnClickListener(v -> {
             if (validateInput()) {
                 try {
-                    // Parse input values
                     String judul = etJudul.getText().toString().trim();
                     String rincian = etRincian.getText().toString().trim();
-                    Date tglAkhir = dateFormat.parse(etTglAkhir.getText().toString());
+                    LocalDateTime tglAkhir = LocalDateTime.parse(
+                            etTglAkhir.getText().toString(), displayFormatter
+                    );
                     boolean isSelesai = rgStatus.getCheckedRadioButtonId() == R.id.radio_selesai;
 
-                    // Create new task
                     Tugas tugas = new Tugas(judul, rincian, tglAkhir);
                     tugas.setSelesai(isSelesai);
 
-                    // Add to database
                     long result = dbHelper.addTugas(tugas);
 
                     if (result != -1) {
@@ -104,13 +112,14 @@ public class IsiTugas extends AppCompatActivity {
                     } else {
                         Toast.makeText(this, "Gagal menambahkan tugas", Toast.LENGTH_SHORT).show();
                     }
-                } catch (ParseException e) {
-                    Toast.makeText(this, "Format tanggal salah (gunakan dd/MM/yyyy)", Toast.LENGTH_SHORT).show();
+                } catch (DateTimeParseException e) {
+                    Toast.makeText(this, "Format tanggal salah (gunakan dd/MM/yyyy HH:mm)", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
+    //Validasi Input
     private boolean validateInput() {
         boolean isValid = true;
 
@@ -119,19 +128,14 @@ public class IsiTugas extends AppCompatActivity {
             isValid = false;
         }
 
-        if (etRincian.getText().toString().trim().isEmpty()) {
-            etRincian.setError("Rincian tidak boleh kosong");
-            isValid = false;
-        }
-
         if (etTglAkhir.getText().toString().isEmpty()) {
             etTglAkhir.setError("Deadline tidak boleh kosong");
             isValid = false;
         } else {
             try {
-                dateFormat.parse(etTglAkhir.getText().toString());
-            } catch (ParseException e) {
-                etTglAkhir.setError("Format tanggal salah");
+                LocalDateTime.parse(etTglAkhir.getText().toString(), displayFormatter);
+            } catch (DateTimeParseException e) {
+                etTglAkhir.setError("Format tanggal salah (dd/MM/yyyy HH:mm)");
                 isValid = false;
             }
         }
